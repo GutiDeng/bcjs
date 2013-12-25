@@ -7,7 +7,6 @@
     if (name in this.colors) {
       return this.colors[name]
     } else {
-      console.log('missing color: ', name)
       return '#000000'
     }
   }

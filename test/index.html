@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+  <head>
+    <title>sandbox</title>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' />
+    <script src='/static/bcjs/src/core.js'></script>
+    <script src='/static/bcjs/src/dom.js'></script>
+    <script src='/static/bcjs/src/layout.js'></script>
+    <script src='/static/bcjs/src/ajax.js'></script>
+  </head>
+  
+  <body>
+    <script>
+
+bcjs.layout.appLayout()
+var appContainer = bcjs.layout.appContainer
+
+var span = new bcjs.dom.Element('span').setHTML('span')
+var area = new bcjs.dom.Element('div').setStyle({
+  'border': '1px solid black',
+  'z-index': 10,
+  'position': 'relative',
+  'width': '100%',
+  'height': '50%',
+}).append(span)
+
+var btn = new bcjs.dom.Element('button').setStyle({
+  'border-radius': '0'
+}).setHTML('btn').appendTo(area)
+
+area.appendTo(appContainer)
+
+bcjs.ajax.go({
+  url: '/cp/len/getChannels',
+  query: {site: 'reuters.com'},
+  callback: function(json, cfg, xhr) {
+    console.log(json, cfg)
+  },
+  callbackOnError: function(error, cfg, xhr) {
+    console.log(error, cfg)
+  }
+})
+
+    </script>
+  </body>
+  
+</html>

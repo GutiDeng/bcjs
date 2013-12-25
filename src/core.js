@@ -1,6 +1,3 @@
-var bcjs = (function() {
-  var _ = Object()
-  return _
-})()
-window.bcjs = bcjs
+// bcjs.core
+window.bcjs = Object()
 
