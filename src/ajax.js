@@ -23,9 +23,9 @@
     if (cfg.query) {
       var uri = cfg.url + '?'
       for (var k in cfg.query) {
-        uri += k + '=' + cfg.query[k] + '&'
+        uri += encodeURIComponent(k) + '=' + encodeURIComponent(cfg.query[k]) + '&'
       }
-      cfg.requestURI = encodeURI(uri)
+      cfg.requestURI = uri
     }
     
     var xhr = new XMLHttpRequest()

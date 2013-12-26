@@ -96,9 +96,10 @@ window.bcjs = Object()
         'cursor': undefined
       })
       this.bcjsOnClickHandler = undefined
-      this.element.removeEventListener('touchstart', this.bcjsTouchstartHandler)
-      this.element.removeEventListener('touchend', this.bcjsTouchendHandler)
-      this.element.removeEventListener('mouseup', this.bcjsMouseupHandler)
+      this.element.removeEventListener('touchstart', this.bcjsTouchStartHandler)
+      this.element.removeEventListener('touchend', this.bcjsTouchEndHandler)
+      this.element.removeEventListener('mouseup', this.bcjsMouseUpHandler)
+      this.element.removeEventListener('mousedown', this.bcjsMouseDownHandler)
       return this
     },
     onClick: function(handler) {
@@ -109,28 +110,41 @@ window.bcjs = Object()
       }
       */
       this.setStyle({
+        '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)',
         'cursor': 'pointer'
       })
       this.bcjsOnClickHandler = handler
       
-      this.bcjsMouseupHandler = function(e) {
-        if (this.bcjsDomElement.bcjsOnClickHandler) {
-          this.bcjsDomElement.bcjsOnClickHandler.call(this.bcjsDomElement, e) && e.stopPropagation()
-        } else {
-          console.log('mouseup but no bcjsOnClickHandler')
+      this.bcjsMouseDownHandler = function(e) {
+        if (this.bcjsOnClickEventType && this.bcjsOnClickEventType == 'touch') {
+          return
+        }
+        //e.preventDefault()
+        //e.stopPropagation()
+      }
+      this.element.addEventListener('mousedown', this.bcjsMouseDownHandler)
+        
+      this.bcjsMouseUpHandler = function(e) {
+        if (this.bcjsDomElement.bcjsOnClickEventType && this.bcjsDomElement.bcjsOnClickEventType == 'touch') {
+          return
+        }
+        var caught = this.bcjsDomElement.bcjsOnClickHandler.call(this.bcjsDomElement, e)
+        if (caught) {
+          e.preventDefault()
+          e.stopPropagation()
         }
       }
-      this.element.addEventListener('mouseup', this.bcjsMouseupHandler)
+      this.element.addEventListener('mouseup', this.bcjsMouseUpHandler)
       
-      this.bcjsTouchstartHandler = function(e) {
+      this.bcjsTouchStartHandler = function(e) {
+        this.bcjsDomElement.bcjsOnClickEventType = 'touch'
         this.bcjsDomElement.bcjsOnClickStartX = e.changedTouches[0].clientX
         this.bcjsDomElement.bcjsOnClickStartY = e.changedTouches[0].clientY
         this.bcjsDomElement.bcjsOnClickStartT = (new Date()).getTime()
       }
-      this.element.addEventListener('touchstart', this.bcjsTouchstartHandler)
+      this.element.addEventListener('touchstart', this.bcjsTouchStartHandler)
       
-      this.bcjsTouchendHandler = function(e) {
-        e.preventDefault()
+      this.bcjsTouchEndHandler = function(e) {
         var x = e.changedTouches[0].clientX
         var y = e.changedTouches[0].clientY
         var t = (new Date()).getTime()
@@ -145,9 +159,13 @@ window.bcjs = Object()
           return
         }
         
-        this.bcjsDomElement.bcjsOnClickHandler.call(this.bcjsDomElement, e) && e.stopPropagation()
+        var caught = this.bcjsDomElement.bcjsOnClickHandler.call(this.bcjsDomElement, e)
+        if (caught) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
       }
-      this.element.addEventListener('touchend', this.bcjsTouchendHandler)
+      this.element.addEventListener('touchend', this.bcjsTouchEndHandler)
       
       return this
     }
@@ -358,6 +376,7 @@ window.bcjs = Object()
     },
     addContentLayer: function(page) {
       var layer = new bcjs.dom.Element('div').setStyle({
+        'overflow': 'auto',
         'position': 'absolute',
         'width': '100%',
         'height': '100%'
@@ -368,7 +387,6 @@ window.bcjs = Object()
     addPage: function() {
       var page = new bcjs.dom.Element('div').setStyle({
         'background': 'white',
-        'overflow': 'hidden',
         'position': 'absolute',
         'width': this.cfg.pagePctWidth + '%',
         'height': this.containerHeight() + 'px'
@@ -532,9 +550,9 @@ window.bcjs = Object()
     if (cfg.query) {
       var uri = cfg.url + '?'
       for (var k in cfg.query) {
-        uri += k + '=' + cfg.query[k] + '&'
+        uri += encodeURIComponent(k) + '=' + encodeURIComponent(cfg.query[k]) + '&'
       }
-      cfg.requestURI = encodeURI(uri)
+      cfg.requestURI = uri
     }
     
     var xhr = new XMLHttpRequest()

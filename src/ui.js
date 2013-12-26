@@ -36,6 +36,7 @@
     },
     addContentLayer: function(page) {
       var layer = new bcjs.dom.Element('div').setStyle({
+        'overflow': 'auto',
         'position': 'absolute',
         'width': '100%',
         'height': '100%'
@@ -46,7 +47,6 @@
     addPage: function() {
       var page = new bcjs.dom.Element('div').setStyle({
         'background': 'white',
-        'overflow': 'hidden',
         'position': 'absolute',
         'width': this.cfg.pagePctWidth + '%',
         'height': this.containerHeight() + 'px'
