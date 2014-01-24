@@ -7,6 +7,7 @@
     method: 'GET',
     url: '',
     query: {},
+    data: undefined,
     parseAs: 'JSON',
     callback: undefined,
     callbackOnError: undefined
@@ -54,7 +55,8 @@
       }
     }
     xhr.open(cfg.method, cfg.requestURI, true)
-    xhr.send()
+    cfg.data && xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(cfg.data || null)
   }
   
   bcjs.ajax = ajax

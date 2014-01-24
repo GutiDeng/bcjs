@@ -14,11 +14,20 @@
   dom.Element.prototype = {
     hide: function() {
       this.setStyle({'display': 'none'})
+      this.onHide()
       return this
+    },
+    onHide: function() {
     },
     show: function() {
       this.setStyle({'display': undefined})
+      this.onShow()
       return this
+    },
+    onShow: function() {
+    },
+    toggleHideShow: function() {
+      this.getStyle('display') === 'none' ? this.show() : this.hide()
     },
     getWidth: function() {
       return this.element.getBoundingClientRect().width
@@ -28,6 +37,9 @@
     },
     getZIndex: function() {
       return window.getComputedStyle(this.element)['z-index']
+    },
+    getStyle: function(k) {
+      return window.getComputedStyle(this.element)[k]
     },
     setStyle: function(obj) {
       for (var k in obj) {
@@ -40,13 +52,27 @@
       }
       return this
     },
+    getAttr: function(k) {
+      if (k === 'value') {
+        return this.element.value
+      } else {
+        return this.element.getAttribute(k)
+      }
+    },
     setAttr: function(obj) {
       for (var k in obj) {
         var v = obj[k]
         if (v === undefined) {
-          this.element.removeAttribute(k)
+          if (k === 'value') {
+          } else {
+            this.element.removeAttribute(k)
+          }
         } else {
-          this.element.setAttribute(k, v)
+          if (k === 'value') {
+            this.element.value = v
+          } else {
+            this.element.setAttribute(k, v)
+          }
         }
       }
       return this
@@ -164,6 +190,12 @@
       }
       this.element.addEventListener('touchend', this.bcjsTouchEndHandler)
       
+      return this
+    },
+    on: function(eventType, handler) {
+      this.element.addEventListener(eventType, function(e) {
+        handler.call(this.bcjsDomElement, e)
+      })
       return this
     }
   }
