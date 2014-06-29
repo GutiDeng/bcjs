@@ -1,9 +1,8 @@
 bcjs
 ====
 
-This project has been renamed to `bcweb` since `JavaScript` only denotes the primary language we use but `web` development is the problem we are solving.
+Rebuild from zero since 29/06/2014.
 
-Go to https://github.com/GutiDeng/bcweb to check out the current status.
-Cheers!
+A current working version can be found at https://github.com/GutiDeng/bcweb .
 
-
+Thanks.
